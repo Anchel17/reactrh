@@ -1,0 +1,16 @@
+com\esig\quarkrh\controller\FuncionarioController.class
+com\esig\quarkrh\repository\UserRepository.class
+com\esig\quarkrh\record\AuthenticationRecord.class
+com\esig\quarkrh\record\RegisterRecord.class
+com\esig\quarkrh\repository\FuncionarioRepository.class
+com\esig\quarkrh\security\SecurityFilter.class
+com\esig\quarkrh\security\SecurityConfiguration.class
+com\esig\quarkrh\enums\UserRole.class
+com\esig\quarkrh\controller\AuthenticationController.class
+com\esig\quarkrh\record\FuncionarioRecord.class
+com\esig\quarkrh\QuarkrhApplication.class
+com\esig\quarkrh\security\service\TokenService.class
+com\esig\quarkrh\entity\Funcionario.class
+com\esig\quarkrh\entity\Users.class
+com\esig\quarkrh\service\AuthorizationService.class
+com\esig\quarkrh\service\FuncionarioService.class
