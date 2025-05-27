@@ -1,7 +1,7 @@
 import { UserRoundIcon } from "lucide-react";
 
-function Login(){
-    function login({userInfos}){
+function Register(){
+    function register({userInfos}){
         console.log(userInfos);
     }
 
@@ -14,16 +14,17 @@ function Login(){
                     </div>
                     <h1 className="text-3xl sm:text-5xl">React RH</h1>
                 </div>
-                <form action={login} className='flex flex-col gap-4 items-center pt-5'>
+                <form action={register} className='flex flex-col gap-4 items-center pt-5'>
                     <input className="border border-gray-400 w-[75%] sm:w-[50%] p-2" type="text" placeholder="Usuário"/>
                     <input className="border border-gray-400 w-[75%] sm:w-[50%] p-2" type="password" placeholder="Senha" />
-                    <button className="bg-blue-500 text-white w-[75%] sm:w-[50%] py-2 cursor-pointer" type="submit">Login</button>
+                    <input className="border border-gray-400 w-[75%] sm:w-[50%] p-2" type="password" placeholder="Repita a senha" />
+                    <button className="bg-blue-500 text-white w-[75%] sm:w-[50%] py-2 cursor-pointer" type="submit">Cadastrar</button>
                 </form>
-                <span className="text-center pt-7">Não possui uma conta?</span>
-                <a href="" className="text-center pb-7 text-blue-700">crie uma conta</a>
+                <span className="text-center pt-7">Possui uma conta?</span>
+                <a href="" className="text-center pb-7 text-blue-700">Faça o login</a>
             </div>
         </div>
     )
 }
 
-export default Login;
+export default Register;
