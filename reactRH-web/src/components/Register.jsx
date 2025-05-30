@@ -85,6 +85,10 @@ function Register(){
         return true;
     }
 
+    function goToLogin(){
+        navigate('/login');
+    }
+
     function onChange(e){
         e.preventDefault();
         
@@ -109,17 +113,18 @@ function Register(){
                 <form method='post' onSubmit={register} className='flex flex-col gap-4 items-center pt-5'>
                     <input className="border border-gray-400 w-[75%] sm:w-[50%] p-2" name='login' 
                     type="text" placeholder="Usuário" value={formValues.login} onChange={onChange} 
-                    required/>
+                    required maxLength='16'/>
                     {loginInvalido && <span className="font-medium text-red-600 text-sm max-w-[80%]">O usuário deve possuir no mínimo 3 caracteres e somente letras.</span>}
                     
                     <input className="border border-gray-400 w-[75%] sm:w-[50%] p-2" name='password' 
                     type="password" placeholder="Senha" value={formValues.password} onChange={onChange} 
-                    required/>
+                    required maxLength='12'/>
                     {senhaInvalida && <span className="font-medium text-red-600 text-sm max-w-[80%]">A senha deve possuir no mínimo 6 caracteres, 1 letra e 1 número.</span>}
                     
                     <input className="border border-gray-400 w-[75%] sm:w-[50%] p-2" name='repeatPassword' 
-                    type="password" placeholder="Repita a senha" value={formValues.repeatPassword} onChange={onChange} />
-                    {confirmarSenhaInvalido && <span className="font-medium text-red-600 text-sm max-w-[80%]" required>Senhas diferentes.</span>}
+                    type="password" placeholder="Repita a senha" value={formValues.repeatPassword} onChange={onChange} 
+                    required maxLength='12'/>
+                    {confirmarSenhaInvalido && <span className="font-medium text-red-600 text-sm max-w-[80%]">Senhas diferentes.</span>}
                     
                     <span>Nível de permissão:</span>
                     <select name='role' value={formValues.role} onChange={onChange} className="border border-gray-400 w-[75%] sm:w-[50%] p-2">
@@ -130,7 +135,7 @@ function Register(){
                     <button className="bg-blue-500 text-white w-[75%] sm:w-[50%] py-2 cursor-pointer rounded-md" type="submit">Cadastrar</button>
                 </form>
                 <span className="text-center pt-7">Possui uma conta?</span>
-                <a href="/login" className="text-center text-blue-700">Faça o login</a>
+                <span onClick={goToLogin} className="text-center text-blue-700 cursor-pointer">Faça o login</span>
             </div>
         </div>
     )
