@@ -3,7 +3,7 @@ import { Pencil, Trash2Icon, UserIcon } from "lucide-react"
 function FuncionarioCard(){
     return (
         <div className="bg-white rounded-md flex lg:w-[45%] w-[100%]">
-            <div className="flex items-center bg-gray-200">
+            <div className="rounded-l-md flex items-center bg-gray-200">
                 <UserIcon size={100}/>
             </div>
             <div className="flex flex-row justify-between w-[100%]">
