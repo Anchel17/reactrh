@@ -1,6 +1,14 @@
 import { LogOutIcon, UserRoundIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 function Header(){
+    const navigate = useNavigate();
+
+    function logOut(){
+        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        navigate('/login');
+    }
+
     return (
         <div className="w-[100%] flex justify-center">
             <div className="sm:w-[70%] w-[90%] flex justify-between text-white text-lg sm:text-4xl pt-8">
@@ -12,7 +20,7 @@ function Header(){
                     <h1 className="font-bold">React RH</h1>
 
                 </div>
-                <button className="hover:cursor-pointer">
+                <button onClick={logOut} className="hover:cursor-pointer">
                     <LogOutIcon size={40} className="sm:block hidden"/>
                     <LogOutIcon size={20} className="sm:hidden block"/>
                 </button>
