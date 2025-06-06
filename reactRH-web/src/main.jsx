@@ -6,6 +6,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import FuncionarioPage from './pages/FuncionarioPage.jsx';
+import CadastroFuncionario from './pages/CadastroFuncionario.jsx';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
   {
     path: '/funcionarios',
     element: <FuncionarioPage/>
+  },
+  {
+    path:'/funcionarios/cadastro',
+    element: <CadastroFuncionario/>
   }
 ]);
 
