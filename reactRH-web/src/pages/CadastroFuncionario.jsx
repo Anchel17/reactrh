@@ -2,12 +2,14 @@ import { ArrowLeftIcon, PlusIcon, UserRoundIcon } from "lucide-react";
 import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import Mensagem from "../components/Mensagem";
 
 function CadastroFuncionario(){
     const [nomeInvalido, setNomeInvalido] = useState(false);
     const [cargoInvalido, setCargoInvalido] = useState(false);
     const [salarioInvalido, setSalarioInvalido] = useState(false);
     const [dataInvalida, setDataInvalida] = useState(false);
+    const [cadastroSucesso, setCadastroSucesso] = useState(false);
     const navigate = useNavigate();
 
     const [formValues, setFormValues] = useState(
@@ -45,7 +47,11 @@ function CadastroFuncionario(){
         )
         .then((response) => {
             if(response.status === 200){
-                navigate('/funcionarios');
+                setCadastroSucesso(true);
+
+                setTimeout(() => {
+                    navigate('/funcionarios');
+                }, 3000)
             }
             else{
                 alert('Erro ao cadastrar funcionário, tente novamente mais tarde.');
@@ -126,6 +132,9 @@ function CadastroFuncionario(){
     return (
         <div className="w-[100%] min-h-screen bg-gradient-to-br bg-cover from-blue-900 to-blue-400 flex flex-col items-center pb-5">
             <Header/>
+            
+            {cadastroSucesso && <Mensagem texto={'Funcionário cadastrado com sucesso! Retornando para o menu principal...'}/>}
+
             <div className="sm:w-[70%] w-[90%] pt-24">
                 <div className="flex flex-row items-center gap-3">
                     <button onClick={goToFuncionarios} className="flex flex-row items-center justify-center gap-2 rounded-md text-white bg-[#033868] px-4 py-2 hover:cursor-pointer">

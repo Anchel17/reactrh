@@ -33,6 +33,7 @@ function FuncionarioPage(){
             }
             catch(err){
                 alert("Erro inesperado ao buscar funcionários.");
+                setIsLoading(false);
                 console.error(err);
             }
         }
