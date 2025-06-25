@@ -1,10 +1,38 @@
 import { PlusIcon } from "lucide-react";
 import FuncionarioCard from "../components/FuncionarioCard";
 import Header from "../components/header";
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 function FuncionarioPage(){
     const navigate = useNavigate();
+    const [funcionarios, setFuncionarios] = useState([]);
+
+    useEffect(() => {
+        async function buscarFuncionarios(){
+            try{
+                let token = await document.cookie;
+                token = token.replace("session=", "");
+                const response = await fetch('http://localhost:8080/funcionario',
+                    {
+                        method: 'GET',
+                        headers: {
+                            "content-type": "application/json",
+                            "authorization": `Bearer ${token}`
+                        },
+                    }
+                )
+
+                const funcionariosJson = await response.json();
+                setFuncionarios(funcionariosJson);
+            }
+            catch(err){
+                alert("Erro inesperado ao buscar funcionários.");
+                console.error(err);
+            }
+        }
+        buscarFuncionarios();
+    }, []);
 
     function goToCadastro(){
         navigate('/funcionarios/cadastro');
@@ -23,9 +51,10 @@ function FuncionarioPage(){
                 </div>
 
                 <div className="flex lg:flex-row flex-col flex-wrap justify-between gap-y-10 pt-5">
-                    <FuncionarioCard/>
-                    <FuncionarioCard/>
-                    <FuncionarioCard/>                                        
+                    {funcionarios.map(func => (
+                        <FuncionarioCard key={func.id} nome={func.nome} 
+                        cargo={func.cargo} salario={func.salario} dataAdmissao={func.dataAdmissao}/>
+                    ))}
                 </div>
             </div>
         </div>

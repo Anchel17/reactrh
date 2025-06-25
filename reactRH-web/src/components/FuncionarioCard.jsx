@@ -1,6 +1,6 @@
 import { Pencil, Trash2Icon, UserIcon } from "lucide-react"
 
-function FuncionarioCard(){
+function FuncionarioCard({nome, cargo, salario, dataAdmissao}){
     return (
         <div className="bg-white rounded-md flex lg:w-[45%] w-[100%]">
             <div className="rounded-l-md flex items-center bg-gray-200">
@@ -8,10 +8,10 @@ function FuncionarioCard(){
             </div>
             <div className="flex flex-row justify-between w-[100%]">
                 <div className="flex flex-col gap-2 px-2 py-2">
-                    <span>Nome: Power Guido</span>
-                    <span>Cargo: Levantador de máquinas</span>
-                    <span>Salário: R$ 5.000</span>
-                    <span>Admissão: 01/01/2001</span>
+                    <span>Nome: {nome}</span>
+                    <span>Cargo: {cargo}</span>
+                    <span>Salário: R$ {salario}</span>
+                    <span>Admissão: {dataAdmissao}</span>
                 </div>
                 <div className="flex flex-col gap-2 pr-2 justify-between py-3">
                     <button className="hover:cursor-pointer">
