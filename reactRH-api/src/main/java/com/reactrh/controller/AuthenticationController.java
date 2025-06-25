@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.reactrh.entity.Users;
 import com.reactrh.record.AuthenticationRecord;
 import com.reactrh.record.RegisterRecord;
+import com.reactrh.record.TokenResponse;
 import com.reactrh.repository.UserRepository;
 import com.reactrh.security.service.TokenService;
 
@@ -37,7 +38,7 @@ public class AuthenticationController {
             var usernamePassword = new UsernamePasswordAuthenticationToken(authenticationRecord.login(), authenticationRecord.password());
             var auth = this.authenticationManager.authenticate(usernamePassword);
             var token = tokenService.generateToken((Users)auth.getPrincipal());
-            return ResponseEntity.ok(token);
+            return ResponseEntity.ok(new TokenResponse(token));
         }
         catch(Exception e) {
             return ResponseEntity.noContent().build();
