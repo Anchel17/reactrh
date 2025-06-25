@@ -1,5 +1,6 @@
 import { PlusIcon } from "lucide-react";
 import FuncionarioCard from "../components/FuncionarioCard";
+import Loading from "../components/Loading"
 import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -7,6 +8,8 @@ import { useEffect, useState } from "react";
 function FuncionarioPage(){
     const navigate = useNavigate();
     const [funcionarios, setFuncionarios] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [temFuncionarios, setTemFuncionarios] = useState(false);
 
     useEffect(() => {
         async function buscarFuncionarios(){
@@ -25,6 +28,8 @@ function FuncionarioPage(){
 
                 const funcionariosJson = await response.json();
                 setFuncionarios(funcionariosJson);
+                setIsLoading(false);
+                setTemFuncionarios(funcionariosJson.length > 0);
             }
             catch(err){
                 alert("Erro inesperado ao buscar funcionários.");
@@ -33,7 +38,7 @@ function FuncionarioPage(){
         }
         buscarFuncionarios();
     }, []);
-
+    
     function goToCadastro(){
         navigate('/funcionarios/cadastro');
     }
@@ -49,16 +54,26 @@ function FuncionarioPage(){
                         <span className="hidden sm:block">Adicionar Funcionário</span>
                     </button>
                 </div>
-
-                <div className="flex lg:flex-row flex-col flex-wrap justify-between gap-y-10 pt-5">
-                    {funcionarios.map(func => (
-                        <FuncionarioCard key={func.id} nome={func.nome} 
-                        cargo={func.cargo} salario={func.salario} dataAdmissao={func.dataAdmissao}/>
-                    ))}
-                </div>
+                {isLoading && 
+                    <div className="flex self-center justify-center pt-5">
+                        <Loading/>
+                    </div>
+                }
+                {temFuncionarios &&
+                    <div className="flex lg:flex-row flex-col flex-wrap justify-between gap-y-10 pt-5">
+                        {funcionarios.map(func => (
+                            <FuncionarioCard key={func.id} nome={func.nome} 
+                            cargo={func.cargo} salario={func.salario} dataAdmissao={func.dataAdmissao}/>
+                        ))}
+                    </div>
+                }
+                {!temFuncionarios && !isLoading &&
+                    <div>
+                        <span className="text-white text-3xl flex justify-center pt-5">Sem funcionários cadastrados!</span>
+                    </div>
+                }
             </div>
         </div>
-
     )
 }
 
