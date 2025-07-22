@@ -1,6 +1,6 @@
-import { ArrowLeftIcon, PlusIcon, UserRoundIcon } from "lucide-react";
+import { ArrowLeftIcon, UserRoundIcon } from "lucide-react";
 import Header from "../components/header";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Mensagem from "../components/Mensagem";
 
@@ -10,14 +10,24 @@ function CadastroFuncionario(){
     const [salarioInvalido, setSalarioInvalido] = useState(false);
     const [dataInvalida, setDataInvalida] = useState(false);
     const [cadastroSucesso, setCadastroSucesso] = useState(false);
+    const [alterarSucesso, setAlterarSucesso] = useState(false);
     const navigate = useNavigate();
+
+    const location = useLocation()
+    const searchParams = new URLSearchParams(location.search);
+    const idParam = searchParams.get('id');
+    const nomeParam = searchParams.get('nome');
+    const cargoParam = searchParams.get('cargo');
+    const salarioParam = searchParams.get('salario');
+    const dataAdmissaoParam = searchParams.get('dataAdmissao');
+    const isEdicaoParam = searchParams.get('isEdicao');
 
     const [formValues, setFormValues] = useState(
         {
-            nome: '',
-            cargo: '',
-            salario: '',
-            dataAdmissao: ''
+            nome: nomeParam || '',
+            cargo: cargoParam || '',
+            salario: salarioParam || '',
+            dataAdmissao: dataAdmissaoParam || ''
         }
     )
 
@@ -32,6 +42,11 @@ function CadastroFuncionario(){
         token = token.replace("session=", "");
 
         if(isFormInvalido(formJson)){
+            return;
+        }
+
+        if(isEdicaoParam){
+            editar(formJson, token);
             return;
         }
 
@@ -59,6 +74,33 @@ function CadastroFuncionario(){
         })
         .catch(() => {
             alert('Erro ao cadastrar funcionário, tente novamente mais tarde.');
+        })
+    }
+
+    function editar(formJson, token){
+        fetch(`http://localhost:8080/funcionario/${idParam}`,
+            {
+                method: 'PUT',
+                headers: {
+                    "content-type": "application/json",
+                    "authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify(formJson)
+            }
+        ).then((response) => {
+            if(response.status === 200){
+                setAlterarSucesso(true);
+
+                setTimeout(() => {
+                    navigate('/funcionarios');
+                }, 3000)
+            }
+            else{
+                alert('Erro ao alterar funcionário, tente novamente mais tarde.');
+            }
+        })
+        .catch(() => {
+            alert('Erro ao alterar funcionário, tente novamente mais tarde.');
         })
     }
 
@@ -134,6 +176,7 @@ function CadastroFuncionario(){
             <Header/>
             
             {cadastroSucesso && <Mensagem texto={'Funcionário cadastrado com sucesso! Retornando para o menu principal...'}/>}
+            {alterarSucesso && <Mensagem texto={'Funcionário alterado com sucesso! Retornando para o menu principal...'}/>}
 
             <div className="sm:w-[70%] w-[90%] pt-24">
                 <div className="flex flex-row items-center gap-3">
@@ -176,7 +219,8 @@ function CadastroFuncionario(){
 
                         <div className="flex justify-end items-center gap-5 pt-3">
                             <button className="text-red-700 font-semibold hover:cursor-pointer">Limpar</button>
-                            <button className="py-2 px-3 text-white bg-blue-500 rounded-lg hover:cursor-pointer" type="submit">Cadastrar</button>
+                            {!isEdicaoParam && <button className="py-2 px-3 text-white bg-blue-500 rounded-lg hover:cursor-pointer" type="submit">Cadastrar</button>}
+                            {isEdicaoParam && <button className="py-2 px-3 text-white bg-blue-500 rounded-lg hover:cursor-pointer" type="submit">Alterar</button>}
                         </div>
                     </div>
 

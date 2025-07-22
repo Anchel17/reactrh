@@ -1,6 +1,7 @@
 import { Pencil, Trash2Icon, UserIcon } from "lucide-react"
+import { Link, Navigate } from "react-router-dom"
 
-function FuncionarioCard({nome, cargo, salario, dataAdmissao}){
+function FuncionarioCard({id, nome, cargo, salario, dataAdmissao}){
     return (
         <div className="bg-white rounded-md flex lg:w-[45%] w-[100%]">
             <div className="rounded-l-md flex items-center bg-gray-200">
@@ -15,7 +16,9 @@ function FuncionarioCard({nome, cargo, salario, dataAdmissao}){
                 </div>
                 <div className="flex flex-col gap-2 pr-2 justify-between py-3">
                     <button className="hover:cursor-pointer">
-                        <Pencil size={32}/>
+                        <Link to={`/funcionarios/cadastro?id=${id}&nome=${nome}&cargo=${cargo}&salario=${salario}&dataAdmissao=${dataAdmissao}&isEdicao=${true}`}>
+                            <Pencil size={32}/>
+                        </Link>
                     </button>
                     <button className="hover:cursor-pointer">
                         <Trash2Icon size={32}/>

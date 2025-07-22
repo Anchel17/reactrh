@@ -63,7 +63,7 @@ function FuncionarioPage(){
                 {temFuncionarios &&
                     <div className="flex lg:flex-row flex-col flex-wrap justify-between gap-y-10 pt-5">
                         {funcionarios.map(func => (
-                            <FuncionarioCard key={func.id} nome={func.nome} 
+                            <FuncionarioCard key={func.id} id={func.id} nome={func.nome} 
                             cargo={func.cargo} salario={func.salario} dataAdmissao={func.dataAdmissao}/>
                         ))}
                     </div>
