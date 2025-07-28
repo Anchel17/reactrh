@@ -3,6 +3,7 @@ import Header from "../components/header";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Mensagem from "../components/Mensagem";
+import { CurrencyInput } from "react-currency-mask";
 
 function CadastroFuncionario(){
     const [nomeInvalido, setNomeInvalido] = useState(false);
@@ -35,18 +36,15 @@ function CadastroFuncionario(){
         event.preventDefault();
 
         const form = event.target;
-        const formData = new FormData(form);
 
-        const formJson = Object.fromEntries(formData.entries());
         let token = document.cookie;
         token = token.replace("session=", "");
-
-        if(isFormInvalido(formJson)){
+        if(isFormInvalido(formValues)){
             return;
         }
 
         if(isEdicaoParam){
-            editar(formJson, token);
+            editar(formValues, token);
             return;
         }
 
@@ -57,7 +55,7 @@ function CadastroFuncionario(){
                     "content-type": "application/json",
                     "authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify(formJson)
+                body: JSON.stringify(formValues)
             }
         )
         .then((response) => {
@@ -115,7 +113,7 @@ function CadastroFuncionario(){
     }
 
     function isNomeInvalido(nome){
-        if(/^(?=.*[A-Za-z])[A-Za-z\s]{3,40}$/.test(nome)){
+        if(/^(?=.*[A-Za-zÀ-ÿ])[A-Za-zÀ-ÿ\s'-]{3,40}$/.test(nome)){
             setNomeInvalido(false);
             return false;
         }
@@ -125,7 +123,7 @@ function CadastroFuncionario(){
     }
 
     function isCargoInvalido(cargo){
-        if(/^(?=.*[A-Za-z])[A-Za-z\d\s]{5,40}$/.test(cargo)){
+        if(/^(?=.*[A-Za-zÀ-ÿ])[A-Za-zÀ-ÿ\s'-.]{5,40}$/.test(cargo)){
             setCargoInvalido(false);
             return false;
         }
@@ -135,7 +133,7 @@ function CadastroFuncionario(){
     }
 
     function isSalarioInvalido(salario){
-        if(/^\d+$/.test(salario)){
+        if(/^\d+(\.\d{1,2})?$/.test(salario)){
             setSalarioInvalido(false);
             return false;
         }
@@ -165,6 +163,13 @@ function CadastroFuncionario(){
         e.preventDefault();
 
         setFormValues({...formValues, [e.target.name]: e.target.value})
+    }
+
+    // eslint-disable-next-line no-unused-vars
+    function onChangeSalary(e, originalValue, maskedValue){
+        e.preventDefault();
+
+        setFormValues({...formValues, [e.target.name]: originalValue});
     }
 
     function goToFuncionarios(){
@@ -206,9 +211,9 @@ function CadastroFuncionario(){
                         {cargoInvalido && <span className="font-medium text-red-600 text-sm">O cargo deve ter entre 5 e 30 caracteres, somente letras.</span>}
 
                         <label className="pt-5">Salario</label>
-                        <input type="number" name="salario" placeholder="Salario" 
+                        <CurrencyInput name="salario" placeholder="Salario" 
                         className="border border-gray-400 w-[100%] sm:w-[100%] p-2"
-                        onChange={onChange} value={formValues.salario} required/>
+                        onChangeValue={onChangeSalary} defaultValue={formValues.salario} required/>
                         {salarioInvalido && <span className="font-medium text-red-600 text-sm">O salário só pode conter números e não ser negativo.</span>}
 
                         <label className="pt-5">Data Admissão</label>
