@@ -4,48 +4,81 @@ import Loading from "../components/Loading"
 import Header from "../components/header";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import Mensagem from "../components/Mensagem";
 
 function FuncionarioPage(){
     const navigate = useNavigate();
     const [funcionarios, setFuncionarios] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [temFuncionarios, setTemFuncionarios] = useState(false);
+    const [deletarSucesso, setDeletarSucesso] = useState(false);
+
+    async function buscarFuncionarios(){
+        try{
+            let token = await document.cookie;
+            token = token.replace("session=", "");
+            const response = await fetch('http://localhost:8080/funcionario',
+                {
+                    method: 'GET',
+                    headers: {
+                        "content-type": "application/json",
+                        "authorization": `Bearer ${token}`
+                    },
+                }
+            )
+
+            const funcionariosJson = await response.json();
+            setFuncionarios(funcionariosJson);
+            setIsLoading(false);
+            setTemFuncionarios(funcionariosJson.length > 0);
+        }
+        catch(err){
+            alert("Erro inesperado ao buscar funcionários.");
+            setIsLoading(false);
+            console.error(err);
+        }
+    }
 
     useEffect(() => {
-        async function buscarFuncionarios(){
-            try{
-                let token = await document.cookie;
-                token = token.replace("session=", "");
-                const response = await fetch('http://localhost:8080/funcionario',
-                    {
-                        method: 'GET',
-                        headers: {
-                            "content-type": "application/json",
-                            "authorization": `Bearer ${token}`
-                        },
-                    }
-                )
-
-                const funcionariosJson = await response.json();
-                setFuncionarios(funcionariosJson);
-                setIsLoading(false);
-                setTemFuncionarios(funcionariosJson.length > 0);
-            }
-            catch(err){
-                alert("Erro inesperado ao buscar funcionários.");
-                setIsLoading(false);
-                console.error(err);
-            }
-        }
         buscarFuncionarios();
     }, []);
     
+    function deletarFuncionario(id){
+         let token = document.cookie;
+        token = token.replace("session=", "");
+
+        fetch(`http://localhost:8080/funcionario/${id}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    "content-type": "application/json",
+                    "authorization": `Bearer ${token}`
+                }
+            }
+        )
+        .then((response) => {
+            if(response.status === 200){
+                setDeletarSucesso(true);
+                buscarFuncionarios();
+
+                setTimeout(() => setDeletarSucesso(false), 3000);
+            }
+            else{
+                alert('Erro ao deletar funcionário, tente novamente mais tarde.');
+            }
+        })
+        .catch(() => {
+            alert('Erro ao deletar funcionário, tente novamente mais tarde.');
+        })
+    }
+
     function goToCadastro(){
         navigate('/funcionarios/cadastro');
     }
 
     return (
         <div className="w-[100%] min-h-screen bg-gradient-to-br bg-cover from-blue-900 to-blue-400 flex flex-col items-center pb-5">
+            {deletarSucesso && <Mensagem texto={'Funcionário deletado com sucesso.'}/>}
             <Header/>
             <div className="sm:w-[70%] w-[90%] pt-24">
                 <div className="flex justify-between">
@@ -64,7 +97,8 @@ function FuncionarioPage(){
                     <div className="flex lg:flex-row flex-col flex-wrap justify-between gap-y-10 pt-5">
                         {funcionarios.map(func => (
                             <FuncionarioCard key={func.id} id={func.id} nome={func.nome} 
-                            cargo={func.cargo} salario={func.salario} dataAdmissao={func.dataAdmissao}/>
+                            cargo={func.cargo} salario={func.salario} dataAdmissao={func.dataAdmissao}
+                            onDeletarFuncionario={deletarFuncionario}/>
                         ))}
                     </div>
                 }

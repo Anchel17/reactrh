@@ -1,8 +1,27 @@
 import { Pencil, Trash2Icon, UserIcon } from "lucide-react"
-import { Link, Navigate } from "react-router-dom"
+import { useState } from "react";
+import { Link } from "react-router-dom"
+import Modal from "./Modal";
+import Mensagem from "./Mensagem";
 
-function FuncionarioCard({id, nome, cargo, salario, dataAdmissao}){
+function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, onDeletarFuncionario}){
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    function toggleModal(){
+        setIsModalOpen(true);
+    }
+
+    const closeModal = () =>{
+        setIsModalOpen(false);
+    }
+
+    const deletarFuncionario = () => {
+        onDeletarFuncionario(id);
+        closeModal();
+    }
+
     return (
+        
         <div className="bg-white rounded-md flex lg:w-[45%] w-[100%]">
             <div className="rounded-l-md flex items-center bg-gray-200">
                 <UserIcon size={100}/>
@@ -20,9 +39,11 @@ function FuncionarioCard({id, nome, cargo, salario, dataAdmissao}){
                             <Pencil size={32}/>
                         </Link>
                     </button>
-                    <button className="hover:cursor-pointer">
+                    <button onClick={toggleModal} className="hover:cursor-pointer">
                         <Trash2Icon size={32}/>
                     </button>
+
+                    {isModalOpen && <Modal onSubmit={deletarFuncionario} onCancel={closeModal} nome={nome}/>}
                 </div>
             </div>
         </div>
