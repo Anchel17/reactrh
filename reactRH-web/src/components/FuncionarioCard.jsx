@@ -2,7 +2,8 @@ import { Pencil, Trash2Icon, UserIcon } from "lucide-react"
 import { useState } from "react";
 import { Link } from "react-router-dom"
 import Modal from "./Modal";
-import Mensagem from "./Mensagem";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, onDeletarFuncionario}){
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,6 +21,14 @@ function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, onDeletarFunci
         closeModal();
     }
 
+    function formatarSalario(){
+        return new Intl.NumberFormat('pt-BR', {style: 'currency', currency:'BRL'}).format(salario);
+    }
+
+    function formatarData(){
+        return format(new Date(dataAdmissao), "dd'/'MM'/'yyyy", {locale: ptBR});
+    }
+
     return (
         
         <div className="bg-white rounded-md flex lg:w-[45%] w-[100%]">
@@ -30,8 +39,8 @@ function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, onDeletarFunci
                 <div className="flex flex-col gap-2 px-2 py-2">
                     <span>Nome: {nome}</span>
                     <span>Cargo: {cargo}</span>
-                    <span>Salário: R$ {salario}</span>
-                    <span>Admissão: {dataAdmissao}</span>
+                    <span>Salário: {formatarSalario()}</span>
+                    <span>Admissão: {formatarData()}</span>
                 </div>
                 <div className="flex flex-col gap-2 pr-2 justify-between py-3">
                     <button className="hover:cursor-pointer">
