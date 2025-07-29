@@ -4,9 +4,21 @@ import { useNavigate } from "react-router-dom";
 function Header(){
     const navigate = useNavigate();
 
-    function logOut(){
-        document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        navigate('/login');
+    async function logOut(){
+        try {
+            await fetch('/api/auth/logout',
+                {
+                    method: 'POST',
+                    credentials: 'include'
+                }
+            );
+        }
+        catch(e){
+            console.log("Logout error ", e);
+        }
+        finally {
+            navigate('/login');
+        }
     }
 
     return (
