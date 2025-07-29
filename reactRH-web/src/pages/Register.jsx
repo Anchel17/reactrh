@@ -30,7 +30,7 @@ function Register(){
             return;
         }
 
-        fetch('http://localhost:8080/auth/register', 
+        fetch('/api/auth/register', 
             {
                 method: form.method, 
                 headers: {"Content-Type": "application/json"}, 

@@ -48,14 +48,14 @@ function CadastroFuncionario(){
             return;
         }
 
-        fetch('http://localhost:8080/funcionario',
+        fetch('/api/funcionario',
             {
                 method: form.method,
                 headers: {
                     "content-type": "application/json",
-                    "authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify(formValues)
+                body: JSON.stringify(formValues),
+                credentials: "include",
             }
         )
         .then((response) => {
@@ -75,15 +75,15 @@ function CadastroFuncionario(){
         })
     }
 
-    function editar(formJson, token){
-        fetch(`http://localhost:8080/funcionario/${idParam}`,
+    function editar(formJson){
+        fetch(`/api/funcionario/${idParam}`,
             {
                 method: 'PUT',
                 headers: {
                     "content-type": "application/json",
-                    "authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify(formJson)
+                body: JSON.stringify(formJson),
+                credentials: "include",
             }
         ).then((response) => {
             if(response.status === 200){

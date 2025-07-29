@@ -20,8 +20,8 @@ function Login(){
         const formData = new FormData(form);
 
         const formJson = Object.fromEntries(formData.entries());
-
-        fetch('http://localhost:8080/auth/login', 
+        
+        fetch('/api/auth/login',
             {
                 method: form.method, 
                 headers: {"Content-Type": "application/json"}, 
@@ -30,7 +30,7 @@ function Login(){
         )
         .then((response) => {
             if(response.status === 200){
-                return response.json();
+                navigate('/funcionarios');
             }
             else if(response.status === 204){
                 setCredenciaisInvalidas(true);
@@ -39,11 +39,7 @@ function Login(){
                 alert("Erro não esperado, tente novamente mais tarde.");
             }
         })
-        .then(json => {
-            document.cookie = "session=" + json.token;
-            navigate('/funcionarios');
-        })
-        .catch(() => alert("Erro não esperado, tente novamente mais tarde."))
+        .catch((e) => {alert("Erro não esperado, tente novamente mais tarde."); console.log(e)})
     }
 
     function goToRegister(){

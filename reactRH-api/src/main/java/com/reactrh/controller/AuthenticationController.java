@@ -17,6 +17,8 @@ import com.reactrh.record.TokenResponse;
 import com.reactrh.repository.UserRepository;
 import com.reactrh.security.service.TokenService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 @RestController
@@ -33,12 +35,23 @@ public class AuthenticationController {
     private TokenService tokenService;
     
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody  @Valid AuthenticationRecord authenticationRecord){
+    public ResponseEntity<?> login(@RequestBody  @Valid AuthenticationRecord authenticationRecord, HttpServletResponse response){
         try {
             var usernamePassword = new UsernamePasswordAuthenticationToken(authenticationRecord.login(), authenticationRecord.password());
             var auth = this.authenticationManager.authenticate(usernamePassword);
             var token = tokenService.generateToken((Users)auth.getPrincipal());
-            return ResponseEntity.ok(new TokenResponse(token));
+            
+            var cookie = new Cookie("session", token);
+            cookie.setHttpOnly(true);
+            //Em um ambiente real, teria uma variável de ambiente setando isso para TRUE em produção
+            //Mas em dev, podemos colocar como false para permitir o envio de tokens com http.
+            cookie.setSecure(false);
+            cookie.setPath("/");
+            cookie.setMaxAge(60 * 60);
+
+            response.addCookie(cookie);
+            
+            return ResponseEntity.ok("Login bem-sucedido");
         }
         catch(Exception e) {
             return ResponseEntity.noContent().build();

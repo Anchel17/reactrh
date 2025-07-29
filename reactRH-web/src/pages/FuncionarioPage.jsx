@@ -15,15 +15,13 @@ function FuncionarioPage(){
 
     async function buscarFuncionarios(){
         try{
-            let token = await document.cookie;
-            token = token.replace("session=", "");
-            const response = await fetch('http://localhost:8080/funcionario',
+            const response = await fetch('/api/funcionario',
                 {
                     method: 'GET',
                     headers: {
                         "content-type": "application/json",
-                        "authorization": `Bearer ${token}`
                     },
+                    credentials: "include",
                 }
             )
 
@@ -47,7 +45,7 @@ function FuncionarioPage(){
          let token = document.cookie;
         token = token.replace("session=", "");
 
-        fetch(`http://localhost:8080/funcionario/${id}`,
+        fetch(`/api/funcionario/${id}`,
             {
                 method: 'DELETE',
                 headers: {
