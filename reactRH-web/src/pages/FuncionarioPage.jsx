@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import Mensagem from "../components/Mensagem";
 
 function FuncionarioPage(){
+    const [loggedUser, setLoggedUser] = useState({login: '', roles: []});
     const navigate = useNavigate();
     const [funcionarios, setFuncionarios] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +27,6 @@ function FuncionarioPage(){
             )
 
             if(response.status === 403){
-                alert("Autenticação expirada! Realize o Login novamente.")
                 navigate('/login');
                 return;
             }
@@ -43,21 +43,50 @@ function FuncionarioPage(){
         }
     }
 
+    async function buscarInformacoesUsuario() {
+        try{
+            const response = await fetch('/api/auth/me',
+                    {
+                        method: 'GET',
+                        headers: {
+                            "content-type": "application/json",
+                        },
+                        credentials: "include",
+                    }
+                );
+
+            if(response.status === 200){
+                const userInfo = await response.json();
+
+                setLoggedUser(userInfo);
+            }
+            else if(response.status === 403){
+                navigate('/login');
+                return;
+            }
+            else{
+                alert("Resposta inesperada do servidor, redirecionando para o Login.");
+            }
+        }
+        catch(err){
+            alert("Erro inesperado ao buscar informações do usuário.");
+            console.error(err);
+        }
+    }
+
     useEffect(() => {
+        buscarInformacoesUsuario();
         buscarFuncionarios();
     }, []);
     
     function deletarFuncionario(id){
-         let token = document.cookie;
-        token = token.replace("session=", "");
-
         fetch(`/api/funcionario/${id}`,
             {
                 method: 'DELETE',
                 headers: {
                     "content-type": "application/json",
-                    "authorization": `Bearer ${token}`
-                }
+                },
+                credentials: "include",
             }
         )
         .then((response) => {
@@ -68,7 +97,7 @@ function FuncionarioPage(){
                 setTimeout(() => setDeletarSucesso(false), 3000);
             }
             else if(response.status === 403){
-                alert("Autenticação expirada! Realize o Login novamente.")
+                alert("Usuário não autorizado a deletar funcionário!")
                 navigate('/login');
                 return;
             }
@@ -92,10 +121,12 @@ function FuncionarioPage(){
             <div className="sm:w-[70%] w-[90%] pt-24">
                 <div className="flex justify-between">
                     <h1 className="text-3xl text-white">Funcionários</h1>
-                    <button onClick={goToCadastro}  className="flex flex-row items-center justify-center gap-2 text-white bg-[#033868] px-4 py-2 hover:cursor-pointer">
-                        <PlusIcon/>
-                        <span className="hidden sm:block">Adicionar Funcionário</span>
-                    </button>
+                    {loggedUser.roles.includes('ROLE_ADMIN') &&
+                        <button onClick={goToCadastro}  className="flex flex-row items-center justify-center gap-2 text-white bg-[#033868] px-4 py-2 hover:cursor-pointer">
+                            <PlusIcon/>
+                            <span className="hidden sm:block">Adicionar Funcionário</span>
+                        </button>
+                    }
                 </div>
                 {isLoading && 
                     <div className="flex self-center justify-center pt-5">
@@ -107,7 +138,7 @@ function FuncionarioPage(){
                         {funcionarios.map(func => (
                             <FuncionarioCard key={func.id} id={func.id} nome={func.nome} 
                             cargo={func.cargo} salario={func.salario} dataAdmissao={func.dataAdmissao}
-                            onDeletarFuncionario={deletarFuncionario}/>
+                            isUserAdmin={loggedUser.roles.includes('ROLE_ADMIN')} onDeletarFuncionario={deletarFuncionario}/>
                         ))}
                     </div>
                 }

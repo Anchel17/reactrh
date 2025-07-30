@@ -5,7 +5,8 @@ import Modal from "./Modal";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, onDeletarFuncionario}){
+function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, isUserAdmin, onDeletarFuncionario}){
+
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     function toggleModal(){
@@ -42,18 +43,20 @@ function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, onDeletarFunci
                     <span>Salário: {formatarSalario()}</span>
                     <span>Admissão: {formatarData()}</span>
                 </div>
-                <div className="flex flex-col gap-2 pr-2 justify-between py-3">
-                    <button className="hover:cursor-pointer">
-                        <Link to={`/funcionarios/cadastro?id=${id}&nome=${nome}&cargo=${cargo}&salario=${salario}&dataAdmissao=${dataAdmissao}&isEdicao=${true}`}>
-                            <Pencil size={32}/>
-                        </Link>
-                    </button>
-                    <button onClick={toggleModal} className="hover:cursor-pointer">
-                        <Trash2Icon size={32}/>
-                    </button>
+                {isUserAdmin &&
+                    <div className="flex flex-col gap-2 pr-2 justify-between py-3">
+                        <button className="hover:cursor-pointer">
+                            <Link to={`/funcionarios/cadastro?id=${id}&nome=${nome}&cargo=${cargo}&salario=${salario}&dataAdmissao=${dataAdmissao}&isEdicao=${true}`}>
+                                <Pencil size={32}/>
+                            </Link>
+                        </button>
+                        <button onClick={toggleModal} className="hover:cursor-pointer">
+                            <Trash2Icon size={32}/>
+                        </button>
 
-                    {isModalOpen && <Modal onSubmit={deletarFuncionario} onCancel={closeModal} nome={nome}/>}
-                </div>
+                        {isModalOpen && <Modal onSubmit={deletarFuncionario} onCancel={closeModal} nome={nome}/>}
+                    </div>
+                }
             </div>
         </div>
     )

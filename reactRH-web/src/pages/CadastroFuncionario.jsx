@@ -36,15 +36,12 @@ function CadastroFuncionario(){
         event.preventDefault();
 
         const form = event.target;
-
-        let token = document.cookie;
-        token = token.replace("session=", "");
         if(isFormInvalido(formValues)){
             return;
         }
 
         if(isEdicaoParam){
-            editar(formValues, token);
+            editar(formValues);
             return;
         }
 
@@ -67,7 +64,7 @@ function CadastroFuncionario(){
                 }, 3000)
             }
             else if(response.status === 403){
-                alert("Autenticação expirada! Realize o Login novamente.")
+                alert('Usuário não autorizado a cadastrar funcionário!')
                 navigate('/login');
                 return;
             }
@@ -99,7 +96,7 @@ function CadastroFuncionario(){
                 }, 3000)
             }
             else if(response.status === 403){
-                alert("Autenticação expirada! Realize o Login novamente.")
+                alert('Usuário não autorizado a alterar funcionário!')
                 navigate('/login');
                 return;
             }
@@ -199,7 +196,8 @@ function CadastroFuncionario(){
                         <ArrowLeftIcon/>
                         <span>Voltar</span>
                     </button>
-                    <h1 className="text-xl sm:text-3xl text-white">Cadastrar Funcionário</h1>
+                    {!isEdicaoParam && <h1 className="text-xl sm:text-3xl text-white">Cadastrar Funcionário</h1>}
+                    {isEdicaoParam && <h1 className="text-xl sm:text-3xl text-white">Editar Funcionário</h1>}
                 </div>
 
                 <form method="post" onSubmit={cadastrar} className="w-[100%] flex bg-white mt-5 rounded-lg">
