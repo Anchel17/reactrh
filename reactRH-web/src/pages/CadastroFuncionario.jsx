@@ -66,6 +66,11 @@ function CadastroFuncionario(){
                     navigate('/funcionarios');
                 }, 3000)
             }
+            else if(response.status === 403){
+                alert("Autenticação expirada! Realize o Login novamente.")
+                navigate('/login');
+                return;
+            }
             else{
                 alert('Erro ao cadastrar funcionário, tente novamente mais tarde.');
             }
@@ -92,6 +97,11 @@ function CadastroFuncionario(){
                 setTimeout(() => {
                     navigate('/funcionarios');
                 }, 3000)
+            }
+            else if(response.status === 403){
+                alert("Autenticação expirada! Realize o Login novamente.")
+                navigate('/login');
+                return;
             }
             else{
                 alert('Erro ao alterar funcionário, tente novamente mais tarde.');

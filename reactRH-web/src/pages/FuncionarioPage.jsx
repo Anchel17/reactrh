@@ -25,6 +25,12 @@ function FuncionarioPage(){
                 }
             )
 
+            if(response.status === 403){
+                alert("Autenticação expirada! Realize o Login novamente.")
+                navigate('/login');
+                return;
+            }
+
             const funcionariosJson = await response.json();
             setFuncionarios(funcionariosJson);
             setIsLoading(false);
@@ -60,6 +66,11 @@ function FuncionarioPage(){
                 buscarFuncionarios();
 
                 setTimeout(() => setDeletarSucesso(false), 3000);
+            }
+            else if(response.status === 403){
+                alert("Autenticação expirada! Realize o Login novamente.")
+                navigate('/login');
+                return;
             }
             else{
                 alert('Erro ao deletar funcionário, tente novamente mais tarde.');
