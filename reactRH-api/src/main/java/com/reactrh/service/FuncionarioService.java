@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.reactrh.entity.Funcionario;
-import com.reactrh.record.FuncionarioRecord;
+import com.reactrh.record.FuncionarioDTO;
 import com.reactrh.repository.FuncionarioRepository;
 
 @Service
@@ -25,29 +25,29 @@ public class FuncionarioService {
         return funcionario;
     }
     
-    public FuncionarioRecord cadastrarFuncionario(FuncionarioRecord funcionarioRecord) {
+    public FuncionarioDTO cadastrarFuncionario(FuncionarioDTO funcionarioRecord) {
         var funcionario = new Funcionario();
-        funcionario.setNome(funcionarioRecord.nome());
-        funcionario.setCargo(funcionarioRecord.cargo());
-        funcionario.setSalario(funcionarioRecord.salario());
-        funcionario.setDataAdmissao(funcionarioRecord.dataAdmissao());
+        funcionario.setNome(funcionarioRecord.getNome());
+        funcionario.setCargo(funcionarioRecord.getCargo());
+        funcionario.setSalario(funcionarioRecord.getSalario());
+        funcionario.setDataAdmissao(funcionarioRecord.getDataAdmissao());
         
         funcionarioRepository.save(funcionario);
         
         return funcionarioRecord;
     }
     
-    public FuncionarioRecord atualizarFuncionario(Long idFuncionario, FuncionarioRecord funcionarioRecord) {
+    public FuncionarioDTO atualizarFuncionario(Long idFuncionario, FuncionarioDTO funcionarioDTO) {
         var funcionario = buscarFuncionario(idFuncionario);
         
-        funcionario.setNome(funcionarioRecord.nome());
-        funcionario.setCargo(funcionarioRecord.cargo());
-        funcionario.setSalario(funcionarioRecord.salario());
-        funcionario.setDataAdmissao(funcionarioRecord.dataAdmissao());
+        funcionario.setNome(funcionarioDTO.getNome());
+        funcionario.setCargo(funcionarioDTO.getCargo());
+        funcionario.setSalario(funcionarioDTO.getSalario());
+        funcionario.setDataAdmissao(funcionarioDTO.getDataAdmissao());
         
         funcionarioRepository.save(funcionario);
         
-        return transformarFuncionarioEntityEmRecord(funcionario);
+        return transformarFuncionarioEntityEmDTO(funcionario);
     }
     
     public void deletarFuncionario(Long idFuncionario) {
@@ -58,7 +58,14 @@ public class FuncionarioService {
         funcionarioRepository.deleteById(idFuncionario);
     }
     
-    private FuncionarioRecord transformarFuncionarioEntityEmRecord(Funcionario funcionario) {
-        return new FuncionarioRecord(funcionario.getId(), funcionario.getNome(), funcionario.getCargo(), funcionario.getSalario(), funcionario.getDataAdmissao());
+    private FuncionarioDTO transformarFuncionarioEntityEmDTO(Funcionario funcionario) {
+        var funcionarioDTO = new FuncionarioDTO();
+        
+        funcionarioDTO.setNome(funcionario.getNome());
+        funcionarioDTO.setCargo(funcionario.getCargo());
+        funcionarioDTO.setSalario(funcionario.getSalario());
+        funcionarioDTO.setDataAdmissao(funcionario.getDataAdmissao());
+        
+        return funcionarioDTO;
     }
 }

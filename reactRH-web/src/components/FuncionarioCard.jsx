@@ -46,7 +46,7 @@ function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, isUserAdmin, o
                 {isUserAdmin &&
                     <div className="flex flex-col gap-2 pr-2 justify-between py-3">
                         <button className="hover:cursor-pointer">
-                            <Link to={`/funcionarios/cadastro?id=${id}&nome=${nome}&cargo=${cargo}&salario=${salario}&dataAdmissao=${dataAdmissao}&isEdicao=${true}`}>
+                            <Link to={`/funcionarios/cadastro?id=${id}&isEdicao=${true}`}>
                                 <Pencil size={32}/>
                             </Link>
                         </button>

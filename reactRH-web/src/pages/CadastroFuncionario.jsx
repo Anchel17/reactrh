@@ -1,7 +1,7 @@
-import { ArrowLeftIcon, UserRoundIcon } from "lucide-react";
+import { ArrowLeftIcon, PlusIcon, UserRoundIcon } from "lucide-react";
 import Header from "../components/header";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Mensagem from "../components/Mensagem";
 import { CurrencyInput } from "react-currency-mask";
 
@@ -12,23 +12,21 @@ function CadastroFuncionario(){
     const [dataInvalida, setDataInvalida] = useState(false);
     const [cadastroSucesso, setCadastroSucesso] = useState(false);
     const [alterarSucesso, setAlterarSucesso] = useState(false);
+    const [previewImageUrl, setPreviewImageUrl] = useState(null);
     const navigate = useNavigate();
 
     const location = useLocation()
     const searchParams = new URLSearchParams(location.search);
     const idParam = searchParams.get('id');
-    const nomeParam = searchParams.get('nome');
-    const cargoParam = searchParams.get('cargo');
-    const salarioParam = searchParams.get('salario');
-    const dataAdmissaoParam = searchParams.get('dataAdmissao');
     const isEdicaoParam = searchParams.get('isEdicao');
 
     const [formValues, setFormValues] = useState(
         {
-            nome: nomeParam || '',
-            cargo: cargoParam || '',
-            salario: salarioParam || '',
-            dataAdmissao: dataAdmissaoParam || ''
+            nome: '',
+            cargo: '',
+            salario: '',
+            dataAdmissao: '',
+            imagemUsuario: null
         }
     )
 
@@ -41,17 +39,24 @@ function CadastroFuncionario(){
         }
 
         if(isEdicaoParam){
-            editar(formValues);
+            editar();
             return;
+        }
+
+        const formData = new FormData();
+        formData.append("nome", formValues.nome);
+        formData.append("cargo", formValues.cargo);
+        formData.append("salario", formValues.salario);
+        formData.append("dataAdmissao", formValues.dataAdmissao);
+        
+        if (formValues.imagemUsuario) {
+            formData.append("imagemUsuario", formValues.imagemUsuario);
         }
 
         fetch('/api/funcionario',
             {
                 method: form.method,
-                headers: {
-                    "content-type": "application/json",
-                },
-                body: JSON.stringify(formValues),
+                body: formData,
                 credentials: "include",
             }
         )
@@ -65,8 +70,6 @@ function CadastroFuncionario(){
             }
             else if(response.status === 403){
                 alert('Usuário não autorizado a cadastrar funcionário!')
-                navigate('/login');
-                return;
             }
             else{
                 alert('Erro ao cadastrar funcionário, tente novamente mais tarde.');
@@ -77,14 +80,21 @@ function CadastroFuncionario(){
         })
     }
 
-    function editar(formJson){
+    function editar(){
+        const formData = new FormData();
+        formData.append("nome", formValues.nome);
+        formData.append("cargo", formValues.cargo);
+        formData.append("salario", formValues.salario);
+        formData.append("dataAdmissao", formValues.dataAdmissao);
+        
+        if (formValues.imagemUsuario) {
+            formData.append("imagemUsuario", formValues.imagemUsuario);
+        }
+
         fetch(`/api/funcionario/${idParam}`,
             {
                 method: 'PUT',
-                headers: {
-                    "content-type": "application/json",
-                },
-                body: JSON.stringify(formJson),
+                body: formData,
                 credentials: "include",
             }
         ).then((response) => {
@@ -183,6 +193,34 @@ function CadastroFuncionario(){
         navigate('/funcionarios');
     }
 
+    function handleFileChange(event){
+        const file = event.target.files[0];
+        if (file) {
+            setFormValues({...formValues, imagemUsuario: file})
+            setPreviewImageUrl(URL.createObjectURL(file));
+        }
+    }
+
+    useEffect(() => {
+        if(isEdicaoParam && idParam){
+            fetch(`/api/funcionario/${idParam}`, {
+                method: 'GET',
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(funcionario => {
+                setFormValues({
+                    nome: funcionario.nome,
+                    cargo: funcionario.cargo,
+                    salario: funcionario.salario,
+                    dataAdmissao: funcionario.dataAdmissao,
+                    funcionarioImage: funcionario.image || null
+                })
+            })
+            .catch(err => console.log(err));
+        }
+    }, [idParam, isEdicaoParam]);
+
     return (
         <div className="w-[100%] min-h-screen bg-gradient-to-br bg-cover from-blue-900 to-blue-400 flex flex-col items-center pb-5">
             <Header/>
@@ -199,10 +237,26 @@ function CadastroFuncionario(){
                     {!isEdicaoParam && <h1 className="text-xl sm:text-3xl text-white">Cadastrar Funcionário</h1>}
                     {isEdicaoParam && <h1 className="text-xl sm:text-3xl text-white">Editar Funcionário</h1>}
                 </div>
-
                 <form method="post" onSubmit={cadastrar} className="w-[100%] flex bg-white mt-5 rounded-lg">
-                    <div className="w-[30%] lg:w-[20%] bg-gray-200 rounded-l-lg flex items-center justify-center">
-                        <UserRoundIcon size={100}/>
+                    <div className="relative group w-[30%] lg:w-[20%] bg-gray-200 rounded-l-lg flex items-center justify-center overflow-hidden">
+                        {previewImageUrl ? (
+                                <div alt="Preview imagem do usuário" 
+                                style={{'--preview-url': `url(${previewImageUrl}`}}
+                                className={`bg-[image:var(--preview-url)] bg-center bg-no-repeat bg-cover w-full h-full object-cover`}></div>
+                            ) : (
+                                <UserRoundIcon size={100} className="z-10"/>
+                        )}
+                        <div className="absolute inset-0 bg-gray-400 bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20">
+                            <PlusIcon size={60} className="text-white" />
+                        </div>
+
+                        <input
+                            type="file"
+                            name="userImage"
+                            accept="image/*"
+                            className="absolute inset-0 opacity-0 cursor-pointer z-30"
+                            onChange={handleFileChange} // Lide com o arquivo aqui
+                        />
                     </div>
 
                     <div className="flex flex-col w-[70%] lg:w-[50%] px-3 py-3">
