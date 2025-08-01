@@ -21,7 +21,7 @@ public class FuncionarioService {
     private MinioService minioService;
     
     public List<Funcionario> buscarTodosFuncionarios(){
-        return funcionarioRepository.findAllByOrderByIdAsc();
+        return funcionarioRepository.findAllByOrderByIdDesc(); 
     }
     
     public Funcionario buscarFuncionario(Long idFuncionario) {
@@ -92,6 +92,7 @@ public class FuncionarioService {
     }
     
     private String criarCaminhoDoArquivoBucket(Long idFuncionario, String nomeFuncionario, String extensao) {
+        nomeFuncionario = nomeFuncionario.replace(' ', '_');
         return String.format("%s_%d.%s", nomeFuncionario, idFuncionario, extensao);
     }
 }

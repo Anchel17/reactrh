@@ -209,17 +209,24 @@ function CadastroFuncionario(){
             })
             .then(response => response.json())
             .then(funcionario => {
+                if(funcionario.caminhoImagemPerfil){
+                    setPreviewImageUrl(getPathImagemFuncionario(funcionario.caminhoImagemPerfil))
+                }
                 setFormValues({
                     nome: funcionario.nome,
                     cargo: funcionario.cargo,
                     salario: funcionario.salario,
                     dataAdmissao: funcionario.dataAdmissao,
-                    funcionarioImage: funcionario.image || null
+                    funcionarioImage: funcionario.caminhoImagemPerfil || null
                 })
             })
             .catch(err => console.log(err));
         }
     }, [idParam, isEdicaoParam]);
+
+    function getPathImagemFuncionario(caminhoImagemPerfil){
+        return `http://localhost:8080/funcionario/imagem/${caminhoImagemPerfil}`;
+    }
 
     return (
         <div className="w-[100%] min-h-screen bg-gradient-to-br bg-cover from-blue-900 to-blue-400 flex flex-col items-center pb-5">

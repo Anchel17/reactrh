@@ -10,5 +10,5 @@ import com.reactrh.record.FuncionarioDTO;
 
 @Repository
 public interface FuncionarioRepository extends JpaRepository<Funcionario, Long>{
-    List<Funcionario> findAllByOrderByIdAsc();
+    List<Funcionario> findAllByOrderByIdDesc();
 }

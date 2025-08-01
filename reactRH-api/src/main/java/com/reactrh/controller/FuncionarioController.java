@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.reactrh.entity.Funcionario;
 import com.reactrh.record.FuncionarioDTO;
 import com.reactrh.service.FuncionarioService;
+import com.reactrh.service.MinioService;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +31,9 @@ public class FuncionarioController {
     
     @Autowired
     private FuncionarioService funcionarioService;
+    
+    @Autowired
+    private MinioService minioService;
     
     @GetMapping(produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Funcionario>> getFuncionarios(){
@@ -45,6 +49,13 @@ public class FuncionarioController {
             log.error("[BUSCAR_FUNCIONARIO][ERRO] - {}", e.getMessage());
             return ResponseEntity.noContent().build();
         }
+    }
+    
+    @GetMapping(value="/imagem/{nomeImagem}")
+    public ResponseEntity<byte[]> buscarImagemFuncionario(@PathVariable String nomeImagem){
+        byte[] imagemFuncionario = minioService.buscarImagemFuncionario(nomeImagem);
+        
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(imagemFuncionario);
     }
     
     @PostMapping(produces=MediaType.APPLICATION_JSON_VALUE)

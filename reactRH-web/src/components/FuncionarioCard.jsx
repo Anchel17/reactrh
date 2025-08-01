@@ -5,7 +5,7 @@ import Modal from "./Modal";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, isUserAdmin, onDeletarFuncionario}){
+function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, caminhoImagemPerfil, isUserAdmin, onDeletarFuncionario}){
 
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -30,11 +30,25 @@ function FuncionarioCard({id, nome, cargo, salario, dataAdmissao, isUserAdmin, o
         return format(new Date(dataAdmissao), "dd'/'MM'/'yyyy", {locale: ptBR});
     }
 
+    function getPathImagemFuncionario(){
+        return `http://localhost:8080/funcionario/imagem/${caminhoImagemPerfil}`;
+    }
+
     return (
         
         <div className="bg-white rounded-md flex lg:w-[45%] w-[100%]">
-            <div className="rounded-l-md flex items-center bg-gray-200">
-                <UserIcon size={100}/>
+            <div className="rounded-l-md w-[30%] flex items-center justify-center bg-gray-200">
+                {caminhoImagemPerfil ? (
+                    <div alt="Imagem Funcionário"
+                    className={`bg-center bg-no-repeat bg-cover w-full h-full object-cover`}
+                    style={{
+                        backgroundImage: `url(${getPathImagemFuncionario()})`
+                    }}
+                    ></div>
+                ) : (
+                    <UserIcon size={100}/>
+                )}
+
             </div>
             <div className="flex flex-row justify-between w-[100%]">
                 <div className="flex flex-col gap-2 px-2 py-2">

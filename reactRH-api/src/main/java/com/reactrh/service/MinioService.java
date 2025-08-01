@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.minio.BucketExistsArgs;
+import io.minio.GetObjectArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -52,6 +53,23 @@ public class MinioService {
         }
         catch(Exception e) {
             log.error("[ENVIAR_ARQUIVO][ERROR] - Erro ao enviar arquivo para o bucket: ", e.getMessage(), e);
+        }
+    }
+    
+    public byte[] buscarImagemFuncionario(String caminhoBucket) {
+        try {
+            var inputStream = minioClient.getObject(
+                    GetObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(caminhoBucket)
+                    .build()
+                    );
+            
+            return inputStream.readAllBytes();
+        }
+        catch(Exception e) {
+            log.error("[BUSCAR_ARQUIVO][ERROR] - Erro ao buscar arquivo no bucket", e.getMessage());
+            return new byte[0];
         }
     }
 }

@@ -138,7 +138,8 @@ function FuncionarioPage(){
                         {funcionarios.map(func => (
                             <FuncionarioCard key={func.id} id={func.id} nome={func.nome} 
                             cargo={func.cargo} salario={func.salario} dataAdmissao={func.dataAdmissao}
-                            isUserAdmin={loggedUser.roles.includes('ROLE_ADMIN')} onDeletarFuncionario={deletarFuncionario}/>
+                            caminhoImagemPerfil={func.caminhoImagemPerfil} isUserAdmin={loggedUser.roles.includes('ROLE_ADMIN')}
+                            onDeletarFuncionario={deletarFuncionario}/>
                         ))}
                     </div>
                 }
