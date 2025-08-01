@@ -37,4 +37,7 @@ public class Funcionario {
     
     @Column(name="DATA_ADMISSAO", nullable=false)
     private LocalDate dataAdmissao;
+    
+    @Column(name="CAMINHO_IMAGEM_PERFIL")
+    private String caminhoImagemPerfil;
 }

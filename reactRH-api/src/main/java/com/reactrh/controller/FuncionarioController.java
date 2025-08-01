@@ -1,12 +1,9 @@
 package com.reactrh.controller;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,7 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,15 +49,15 @@ public class FuncionarioController {
     
     @PostMapping(produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<FuncionarioDTO> postFuncionario( @ModelAttribute FuncionarioDTO funcionarioDTO,
-            @RequestParam(value = "imagemUsuario", required = false) MultipartFile imagemUsuario) throws IOException {
-        return ResponseEntity.ok(funcionarioService.cadastrarFuncionario(funcionarioDTO));
+            @RequestParam(value = "imagemUsuario", required = false) MultipartFile imagemFuncionario) throws IOException {
+        return ResponseEntity.ok(funcionarioService.cadastrarFuncionario(funcionarioDTO, imagemFuncionario));
     }
     
     @PutMapping(value="/{idFuncionario}",  produces=MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> putFuncionario(@PathVariable Long idFuncionario, @ModelAttribute FuncionarioDTO funcionarioDTO,
-            @RequestParam(value = "imagemUsuario", required = false) MultipartFile imagemUsuario){
+            @RequestParam(value = "imagemUsuario", required = false) MultipartFile imagemFuncionario){
         try {
-            return ResponseEntity.ok(funcionarioService.atualizarFuncionario(idFuncionario, funcionarioDTO));
+            return ResponseEntity.ok(funcionarioService.atualizarFuncionario(idFuncionario, funcionarioDTO, imagemFuncionario));
         }
         catch(Exception e) {
             log.error("[CADASTRAR_FUNCIONARIO][ERRO] - {}", e.getMessage());

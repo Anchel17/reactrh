@@ -1,9 +1,12 @@
 package com.reactrh.service;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.reactrh.entity.Funcionario;
 import com.reactrh.record.FuncionarioDTO;
@@ -13,6 +16,9 @@ import com.reactrh.repository.FuncionarioRepository;
 public class FuncionarioService {
     @Autowired
     private FuncionarioRepository funcionarioRepository;
+    
+    @Autowired
+    private MinioService minioService;
     
     public List<Funcionario> buscarTodosFuncionarios(){
         return funcionarioRepository.findAllByOrderByIdAsc();
@@ -25,25 +31,41 @@ public class FuncionarioService {
         return funcionario;
     }
     
-    public FuncionarioDTO cadastrarFuncionario(FuncionarioDTO funcionarioRecord) {
+    @Modifying
+    public FuncionarioDTO cadastrarFuncionario(FuncionarioDTO funcionarioDTO, MultipartFile imagemFuncionario) {
         var funcionario = new Funcionario();
-        funcionario.setNome(funcionarioRecord.getNome());
-        funcionario.setCargo(funcionarioRecord.getCargo());
-        funcionario.setSalario(funcionarioRecord.getSalario());
-        funcionario.setDataAdmissao(funcionarioRecord.getDataAdmissao());
+        funcionario.setNome(funcionarioDTO.getNome());
+        funcionario.setCargo(funcionarioDTO.getCargo());
+        funcionario.setSalario(funcionarioDTO.getSalario());
+        funcionario.setDataAdmissao(funcionarioDTO.getDataAdmissao());
         
-        funcionarioRepository.save(funcionario);
+        var funcionarioEntity = funcionarioRepository.save(funcionario);
         
-        return funcionarioRecord;
+        if(!Objects.isNull(imagemFuncionario)) {
+            var caminhoBucket = criarCaminhoDoArquivoBucket(funcionarioEntity.getId(), funcionarioEntity.getNome(), "webp");
+            funcionarioEntity.setCaminhoImagemPerfil(caminhoBucket);
+            funcionarioRepository.save(funcionarioEntity);
+            minioService.uploadFile(imagemFuncionario, caminhoBucket);
+        }
+        
+        
+        return funcionarioDTO;
     }
     
-    public FuncionarioDTO atualizarFuncionario(Long idFuncionario, FuncionarioDTO funcionarioDTO) {
+    @Modifying
+    public FuncionarioDTO atualizarFuncionario(Long idFuncionario, FuncionarioDTO funcionarioDTO, MultipartFile imagemFuncionario) {
         var funcionario = buscarFuncionario(idFuncionario);
         
         funcionario.setNome(funcionarioDTO.getNome());
         funcionario.setCargo(funcionarioDTO.getCargo());
         funcionario.setSalario(funcionarioDTO.getSalario());
         funcionario.setDataAdmissao(funcionarioDTO.getDataAdmissao());
+        
+        if(!Objects.isNull(imagemFuncionario)) {
+            var caminhoBucket = criarCaminhoDoArquivoBucket(funcionario.getId(), funcionario.getNome(), "webp");
+            funcionario.setCaminhoImagemPerfil(caminhoBucket);
+            minioService.uploadFile(imagemFuncionario, caminhoBucket);
+        }
         
         funcionarioRepository.save(funcionario);
         
@@ -67,5 +89,9 @@ public class FuncionarioService {
         funcionarioDTO.setDataAdmissao(funcionario.getDataAdmissao());
         
         return funcionarioDTO;
+    }
+    
+    private String criarCaminhoDoArquivoBucket(Long idFuncionario, String nomeFuncionario, String extensao) {
+        return String.format("%s_%d.%s", nomeFuncionario, idFuncionario, extensao);
     }
 }
