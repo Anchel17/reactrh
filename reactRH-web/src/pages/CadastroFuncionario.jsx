@@ -30,16 +30,10 @@ function CadastroFuncionario(){
         }
     )
 
-    function cadastrar(event){
+    function handleSubmit(event){
         event.preventDefault();
 
-        const form = event.target;
         if(isFormInvalido(formValues)){
-            return;
-        }
-
-        if(isEdicaoParam){
-            editar();
             return;
         }
 
@@ -53,69 +47,37 @@ function CadastroFuncionario(){
             formData.append("imagemUsuario", formValues.imagemUsuario);
         }
 
-        fetch('/api/funcionario',
+        const urlRequest = isEdicaoParam 
+                ? `/api/funcionario/${idParam}`
+                : '/api/funcionario';
+        
+        const httpMethod = isEdicaoParam ? 'PUT' : 'POST';
+
+        fetch(urlRequest,
             {
-                method: form.method,
+                method: httpMethod,
                 body: formData,
                 credentials: "include",
             }
         )
         .then((response) => {
             if(response.status === 200){
-                setCadastroSucesso(true);
+
+                isEdicaoParam ? setAlterarSucesso(true) : setCadastroSucesso(true);
 
                 setTimeout(() => {
                     navigate('/funcionarios');
                 }, 3000)
             }
             else if(response.status === 403){
-                alert('Usuário não autorizado a cadastrar funcionário!')
+                alert('Usuário não autorizado!')
             }
             else{
-                alert('Erro ao cadastrar funcionário, tente novamente mais tarde.');
+                alert('Erro ao realizar operação, tente novamente mais tarde.');
             }
         })
         .catch(() => {
-            alert('Erro ao cadastrar funcionário, tente novamente mais tarde.');
-        })
-    }
-
-    function editar(){
-        const formData = new FormData();
-        formData.append("nome", formValues.nome);
-        formData.append("cargo", formValues.cargo);
-        formData.append("salario", formValues.salario);
-        formData.append("dataAdmissao", formValues.dataAdmissao);
-        
-        if (formValues.imagemUsuario) {
-            formData.append("imagemUsuario", formValues.imagemUsuario);
-        }
-
-        fetch(`/api/funcionario/${idParam}`,
-            {
-                method: 'PUT',
-                body: formData,
-                credentials: "include",
-            }
-        ).then((response) => {
-            if(response.status === 200){
-                setAlterarSucesso(true);
-
-                setTimeout(() => {
-                    navigate('/funcionarios');
-                }, 3000)
-            }
-            else if(response.status === 403){
-                alert('Usuário não autorizado a alterar funcionário!')
-                navigate('/login');
-                return;
-            }
-            else{
-                alert('Erro ao alterar funcionário, tente novamente mais tarde.');
-            }
-        })
-        .catch(() => {
-            alert('Erro ao alterar funcionário, tente novamente mais tarde.');
+            alert('Erro ao realizar operação, tente novamente mais tarde.');
         })
     }
 
@@ -244,7 +206,7 @@ function CadastroFuncionario(){
                     {!isEdicaoParam && <h1 className="text-xl sm:text-3xl text-white">Cadastrar Funcionário</h1>}
                     {isEdicaoParam && <h1 className="text-xl sm:text-3xl text-white">Editar Funcionário</h1>}
                 </div>
-                <form method="post" onSubmit={cadastrar} className="w-[100%] flex bg-white mt-5 rounded-lg">
+                <form method="post" onSubmit={handleSubmit} className="w-[100%] flex bg-white mt-5 rounded-lg">
                     <div className="relative group w-[30%] lg:w-[20%] bg-gray-200 rounded-l-lg flex items-center justify-center overflow-hidden">
                         {previewImageUrl ? (
                                 <div alt="Preview imagem do usuário" 
